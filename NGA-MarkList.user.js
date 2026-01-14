@@ -403,6 +403,31 @@
         });
     }
 
+    //当按钮位置超出视窗时，修正位置
+    function clampButtonPosition(button) {
+        const rect = button.getBoundingClientRect();
+
+        const btnWidth = rect.width || 40;
+        const btnHeight = rect.height || 40;
+
+        const maxLeft = window.innerWidth - btnWidth;
+        const maxTop = window.innerHeight - btnHeight;
+
+        let left = parseInt(button.style.left, 10);
+        let top = parseInt(button.style.top, 10);
+
+        // 如果没设置过位置，直接返回
+        if (isNaN(left) || isNaN(top)) return;
+
+        // 修正到可视范围内
+        left = Math.min(Math.max(0, left), maxLeft);
+        top = Math.min(Math.max(0, top), maxTop);
+
+        button.style.left = left + 'px';
+        button.style.top = top + 'px';
+    }
+
+
     // 滚动到指定楼层的函数
     function scrollToLou() {
         //从sessionStorage读取缓存的楼层
@@ -723,6 +748,12 @@
         if (state.data.setting.left !== '') {
             button.style.left = state.data.setting.left;
         }
+
+        clampButtonPosition(button);
+
+        window.addEventListener('resize', () => {
+            clampButtonPosition(button);
+        });
 
         // 5. 绑定鼠标拖动事件
         button.addEventListener('mousedown', (e) => {
