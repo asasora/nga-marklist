@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         NGA 收藏按钮 demo
 // @namespace    https://github.com/asasora/nga-marklist
-// @version      2026-01-12
+// @version      2026-01-14-0.3.0-beta.1
 // @description  try to take over the world!
 // @author       朝苍琴月
 // @match        *://bbs.nga.cn/*
@@ -33,8 +33,45 @@
  * }
  * =============== */
 
+//依赖项
+this.sentinel || function (e, n) {
+    var a, o, r, s, l, f;
+    sentinel = (
+        s = Array.isArray,
+        l = {},
+        f = {},
+        {
+            on: function (e, i) {
+                if (i) {
+                    if (!a) {
+                        var n = document, t = n.head; n.addEventListener("animationstart", function (e, n, t, i) { if (n = f[e.animationName]) for (e.stopImmediatePropagation(), t = n.length, i = 0; i < t; i++)n[i](e.target) }, !0), a = n.createElement("style"), t.insertBefore(a, t.firstChild), o = a.sheet, r = o.cssRules
+                    } (s(e) ? e : [e]).map(function (e, n, t) { (n = l[e]) || (t = "!" == e[0], l[e] = n = t ? e.slice(1) : "sentinel-" + Math.random().toString(16).slice(2), r[o.insertRule("@keyframes " + n + "{from{transform:none;}to{transform:none;}}", r.length)]._id = e, t || (r[o.insertRule(e + "{animation-duration:0.0001s;animation-name:" + n + ";}", r.length)]._id = e), l[e] = n), (f[n] = f[n] || []).push(i) })
+                }
+            },
+            off: function (e, a) {
+                (s(e) ? e : [e]).map(function (e, n, t, i) {
+                    if (n = l[e]) {
+                        if (t = f[n], a) for (i = t.length; i--;)t[i] === a && t.splice(i, 1); else t = [];
+                        if (!t.length) {
+                            for (i = r.length; i--;)r[i]._id == e && o.deleteRule(i); delete l[e], delete f[n]
+                        }
+                    }
+                })
+            },
+            reset: function () {
+                l = {},
+                    f = {},
+                    a && a.parentNode.removeChild(a),
+                    a = 0
+            }
+        }),
+        (n = e.createEvent("HTMLEvents")).initEvent ? n.initEvent("sentinel-load", !1, !1) : n = new Event("sentinel-load"), e.dispatchEvent(n)
+}(document);
+
 (function () {
     'use strict';
+
+
     /*==========
     * 基础存取函数
     * ========== */
@@ -461,30 +498,30 @@
                 document.querySelector(`a[name="${lou}"]`);
             //找到目标后将目标元素滚动到可视区域中央
             if (!target) {
-                if(retry>50)clearInterval(timer);//超过5秒还没找到就放弃
+                if (retry > 50) clearInterval(timer);//超过5秒还没找到就放弃
                 return;
             }
 
             //计算目标元素距离页面顶部的距离
-            const top = target.getBoundingClientRect().top + window.pageYOffset-100;//留一点距离，避免贴在最上面
-            
-            
+            const top = target.getBoundingClientRect().top + window.pageYOffset - 100;//留一点距离，避免贴在最上面
+
+
             window.scrollTo({
                 top,
-                behavior:'auto'
+                behavior: 'auto'
             });
 
             //检测是否已经稳定在目标位置
-            if(lastTop!==null&&Math.abs(lastTop - top)<2){
+            if (lastTop !== null && Math.abs(lastTop - top) < 2) {
                 stableCount++;
-            }else{
-                stableCount=0;
+            } else {
+                stableCount = 0;
             }
 
             lastTop = top;
 
             //如果已经稳定了3次，就认为滚动完成，停止检测
-            if(stableCount>=3){
+            if (stableCount >= 3) {
                 clearInterval(timer);
             }
         }, 200);
