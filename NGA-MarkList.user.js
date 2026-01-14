@@ -71,7 +71,6 @@
     function saveMarkList() {
         console.log('存储中...');
         localStorage.setItem('NGA_marklist', JSON.stringify(state.data));
-        console.log(localStorage.getItem('NGA_marklist'));
     }
 
     /*==========
@@ -140,18 +139,18 @@
 
     // --！ 重要 书签按钮函数
     function clickMarkButton() {
-        console.log('点击了添加书签按钮');
+        //console.log('点击了添加书签按钮');
 
         //数据抓取
         let sharpLou = getButtonLou();
         let lou = sharpLou.replace('#', '');
-        console.log(sharpLou);
+        //console.log(sharpLou);
 
         let tid = getButtonTid();
-        console.log(tid);
+        //console.log(tid);
 
         let title = getTitleFromWindow();
-        console.log(title);
+        //console.log(title);
 
         //检查书签是否存在
         if (checkMarkList(tid, lou)) {
@@ -201,7 +200,7 @@
         // 找到框里面的容器元素
         const div = document.querySelector('.ltxt');
         const posts = div.querySelector('span');
-        console.log('开始添加按钮');
+        //console.log('开始添加按钮');
         if (posts.querySelector('a:last-child').innerHTML == '添加书签') {
             console.log('已跳过添加按钮');
             return;
@@ -704,7 +703,6 @@
 
         button.onclick = function () {
             if (moved) return;
-            console.log(state.data);
             showMarkListPopup();
         };
         /* ------------ 拖拽相关的事件 ------------ */
@@ -794,13 +792,11 @@
 
     //监听
     sentinel.on('.postoptb', function (el) {
-        console.log('发现齿轮');
         el.addEventListener('click', addMarkButton);
     });
 
     sentinel.on('.postbtnsc', function (el) {
         const moreButton = Array.from(el.querySelectorAll('a')).slice(-1)[0];
-        console.log('悬停中');
         moreButton.removeEventListener('click', addMarkButton);
         moreButton.addEventListener('click', addMarkButton);
     });
