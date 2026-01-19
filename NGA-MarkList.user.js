@@ -379,11 +379,40 @@ this.sentinel || function (e, n) {
             color: #d00;
         }
 
+        .popup-tools {
+    float: right;
+    display: flex;
+    gap: 6px;
+}
+
+.popup-export,
+.popup-import {
+    font-size: 12px;
+    padding: 4px 8px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    background: #eee;
+}
+
+.popup-export:hover,
+.popup-import:hover {
+    background: #ddd;
+}
+
+
         </style>
 
         <div class="popup-mask">
         <div class="popup-box">
-            <div class="popup-title">我的书签</div>
+            <div class="popup-title">
+                我的书签
+            <div class="popup-tools">
+        <button class="popup-export">导出</button>
+        <button class="popup-import">导入</button>
+    </div>
+</div>
+
             <div class="mark-list">
                 ${listHTML}
             </div>
@@ -400,7 +429,12 @@ this.sentinel || function (e, n) {
             wrapper.remove();
         };
 
+
         // 5. 绑定书签点击逻辑
+        //导入导出按钮逻辑
+        wrapper.querySelector('.popup-export').onclick = exportMarkList;
+        wrapper.querySelector('.popup-import').onclick = importMarkList;
+
         //对于每个mark-item，绑定点击事件
         wrapper.querySelectorAll('.mark-item').forEach(item => {
             item.onclick = function () {
@@ -526,6 +560,65 @@ this.sentinel || function (e, n) {
             }
         }, 200);
     }
+
+    //导出书签
+    function exportMarkList() {
+        const data = state.data.mark;
+        const json = JSON.stringify(data, null, 2);
+
+        const blob = new Blob([json], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `NGA_bookmarks_${Date.now()}.json`;
+        a.click();
+
+        URL.revokeObjectURL(url);
+        showAlertPopup('书签已导出');
+    }
+
+    //导入书签
+    function importMarkList() {
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.accept = 'application/json';
+
+        input.onchange = () => {
+            const file = input.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = () => {
+                try {
+                    const data = JSON.parse(reader.result);
+
+                    if (!data || typeof data !== 'object') {
+                        throw new Error('格式错误');
+                    }
+
+                    // 合并导入（不会清空原数据）
+                    for (const key in data) {
+                        const item = data[key];
+                        if (item && item.tid && item.lou && item.title) {
+                            state.data.mark[key] = item;
+                        }
+                    }
+
+                    saveMarkList();
+                    showAlertPopup('书签导入成功，请重新打开列表');
+                } catch (e) {
+                    showAlertPopup('导入失败：JSON 格式不正确');
+                }
+            };
+
+            reader.readAsText(file);
+        };
+
+        input.click();
+    }
+
+
 
     /*==========
     * 弹框事件
@@ -872,3 +965,4 @@ this.sentinel || function (e, n) {
 
 
 })();
+
