@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         NGA 收藏按钮 demo
 // @namespace    https://github.com/asasora/nga-marklist
-// @version      2026-01-14-0.3.0-beta.1
+// @version      2026-01-19-0.4.0-beta.1
 // @description  try to take over the world!
 // @author       朝苍琴月
 // @match        *://bbs.nga.cn/*
@@ -965,4 +965,5 @@ this.sentinel || function (e, n) {
 
 
 })();
+
 
